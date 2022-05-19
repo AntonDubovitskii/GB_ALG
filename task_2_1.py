@@ -56,4 +56,3 @@ def my_calc():
 
 print(my_calc())
 
-

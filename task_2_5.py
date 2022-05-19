@@ -28,5 +28,3 @@ def ascii_print(value=32):
 
 ascii_print()
 
-
-

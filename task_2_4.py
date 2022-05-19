@@ -20,5 +20,3 @@ def series_elements_sum(el_amount, counter=0, el=1.0, el_sum=0.0):
 required_amount = int(input('Введите количество элементов: '))
 print(series_elements_sum(required_amount))
 
-
-
