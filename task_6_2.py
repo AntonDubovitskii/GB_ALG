@@ -10,28 +10,25 @@
 from memory_profiler import profile
 
 """
-Взята функция even_and_odd() из домашнего задания 2, упражнения 2.
-Функция подсчитывает четные и нечетные цифры введенного натурального числа, используя рекурсию.
+Взята функция number_flip() из упражнения 3, ДЗ-2, текущего курса.
+Функция формирует из введенного числа обратное по порядку и выводит на экран.
 """
 
 
 @profile
 def wrapper(w_number):
-    def even_and_odd(my_number, even=0, odd=0):
-        if my_number != 0:
-            remainder = my_number % 10
-            if remainder % 2 == 0:
-                even += 1
-            else:
-                odd += 1
-            return even_and_odd(my_number // 10, even, odd)
+    def number_flip(number):
+        integer_part, remainder = divmod(number, 10)
+
+        if integer_part == 0:
+            return str(remainder)
         else:
-            print(f'Количество четных цифр во введенном числе - {even}, нечетных - {odd}')
-    return even_and_odd(w_number)
+            return str(remainder) + str(number_flip(integer_part))
+    return number_flip(w_number)
 
 
-number = int(input('Введите число для подсчета четных и нечетных цифр: \n'))
-wrapper(number)
+number = int(input('Введите число, которое требуется перевернуть: \n'))
+print(wrapper(number))
 
 """
 При попытке профилирования рекурсивной функции, происходит срабатывание декоратора @profile столько раз, сколько 

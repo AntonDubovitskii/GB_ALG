@@ -13,92 +13,83 @@
 Это файл для первого скрипта
 """
 
-from memory_profiler import memory_usage
-from collections import defaultdict
+from memory_profiler import profile
+"""
+Для оптимизации выбран скрипт из задания 1, ДЗ6 текущего курса.
+Пользователь вводит данные о количестве предприятий,
+их наименования и прибыль за 4 квартала
+(т.е. 4 отдельных числа) для каждого предприятия.
+Программа должна определить среднюю прибыль (за год для всех предприятий)
+и вывести наименования предприятий, чья прибыль выше среднего и отдельно
+вывести наименования предприятий, чья прибыль ниже среднего
+"""
 
 
-def memory(func):
-    def wrapper(*args, **kwargs):
-        m1 = memory_usage()
-        res = func(*args)
-        m2 = memory_usage()
-        mem_diff = m2[0] - m1[0]
-        print(f"Выполнение заняло {mem_diff} Mib")
-        return res
-
-    return wrapper
-
-
-@memory
-def income_comparison():
-    companies_count = int(input('Введите количество компаний, которые будут рассматриваться: '))
-    companies_dict = defaultdict(list)
-
-    for i in range(companies_count):
-        company_name = input('Введите название предприятия: ')
-
-        try:
-            profit = [int(x) for x in input('Через пробел введите прибыль компании за '
-                                            'каждый квартал этого года: ').split(' ')]
-            companies_dict[company_name] = sum(profit)
-        except ValueError:
-            print('Ошибка! Допускается вводить только числа через пробел!')
-
-    try:
-        average_profit = sum(companies_dict.values()) / len(companies_dict.values())
-
-        print(f'Средняя годовая прибыль всех компаний: {average_profit}')
-
-        print(f'Компании с прибылью выше среднего значения: '
-              f'{list({key: value for (key, value) in companies_dict.items() if value > average_profit})}')
-        print(f'Компании с прибылью ниже среднего значения: '
-              f'{list({key: value for (key, value) in companies_dict.items() if value < average_profit})}')
-    except ZeroDivisionError:
-        print('Ошибка! Не получено данных ни об одной компании!')
+@profile
+def func_5():
+    array = list(range(500000))
+    mydict = {}
+    for i in array:
+        dict_key = i
+        if dict_key not in mydict:
+            mydict[i] = 1
+        else:
+            mydict[i] += 1
+    result_key = max(mydict, key=mydict.get)
+    return f"Чаще всего встречается число {result_key}, оно появилось в массиве" \
+           f" {mydict[result_key]} раз(а)"
 
 
-@memory
-def income_comparison_map():
-    companies_count = int(input('Введите количество компаний, которые будут рассматриваться: '))
-    companies_dict = defaultdict(list)
-
-    for i in range(companies_count):
-        company_name = input('Введите название предприятия: ')
-
-        try:
-            profit = map(int, input('Через пробел введите прибыль компании за '
-                                            'каждый квартал этого года: ').split(' '))
-            companies_dict[company_name] = sum(profit)
-        except ValueError:
-            print('Ошибка! Допускается вводить только числа через пробел!')
-
-    try:
-        average_profit = sum(companies_dict.values()) / len(companies_dict.values())
-
-        print(f'Средняя годовая прибыль всех компаний: {average_profit}')
-
-        print(f'Компании с прибылью выше среднего значения: '
-              f'{list({key: value for (key, value) in companies_dict.items() if value > average_profit})}')
-        print(f'Компании с прибылью ниже среднего значения: '
-              f'{list({key: value for (key, value) in companies_dict.items() if value < average_profit})}')
-    except ZeroDivisionError:
-        print('Ошибка! Не получено данных ни об одной компании!')
+@profile
+def func_5_no_garbage():
+    array = list(range(500000))
+    mydict = {}
+    for i in array:
+        dict_key = i
+        if dict_key not in mydict:
+            mydict[i] = 1
+        else:
+            mydict[i] += 1
+    del array
+    result_key = max(mydict, key=mydict.get)
+    detections_number = mydict[result_key]
+    del mydict
+    return f"Чаще всего встречается число {result_key}, оно появилось в массиве" \
+           f" {detections_number} раз(а)"
 
 
-income_comparison()  # Выполнение заняло 0.0625 Mib
-#income_comparison_map() # Выполнение заняло 0.05859375 Mib
+func_5()             # 58.8 MiB
+func_5_no_garbage()  # 22.0 MiB
 
 """
-Введите количество компаний, которые будут рассматриваться: 5
-Введите название предприятия: 1
-Через пробел введите прибыль компании за каждый квартал этого года: 8239487234 82347982347 82374892374 832479283
-Введите название предприятия: 2
-Через пробел введите прибыль компании за каждый квартал этого года: 28349237489 423847239847 98273498237498 82374892347
-Введите название предприятия: 3
-Через пробел введите прибыль компании за каждый квартал этого года: 8234923798478 28347923847 2834793827489 4823974923874
-Введите название предприятия: 4
-Через пробел введите прибыль компании за каждый квартал этого года: 823479823749 28347923845723987 4823749823749823 48273489237498
-Введите название предприятия: 5
-Через пробел введите прибыль компании за каждый квартал этого года: 823497823984 48923748237498237498 48237498237498237 4849283479283479
-Средняя годовая прибыль всех компаний: 9.80203430345126e+18
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    44     22.0 MiB     22.0 MiB           1   @profile
+    45                                         def func_5_no_garbage():
+    46     38.8 MiB     16.8 MiB           1       array = list(range(500000))
+    47     38.8 MiB      0.0 MiB           1       mydict = {}
+    48     58.8 MiB      0.0 MiB      500001       for i in array:
+    49     58.8 MiB      0.0 MiB      500000           dict_key = i
+    50     58.8 MiB      0.0 MiB      500000           if dict_key not in mydict:
+    51     58.8 MiB     20.0 MiB      500000               mydict[i] = 1
+    52                                                 else:
+    53                                                     mydict[i] += 1
+    54     55.0 MiB     -3.8 MiB           1       del array
+    55     55.0 MiB      0.0 MiB           1       result_key = max(mydict, key=mydict.get)
+    56     55.0 MiB      0.0 MiB           1       detections_number = mydict[result_key]
+    57     22.0 MiB    -33.0 MiB           1       del mydict
+    58     22.0 MiB      0.0 MiB           2       return f"Чаще всего встречается число {result_key}, оно появилось в 
+    массиве" \
+    59     22.0 MiB      0.0 MiB           1              f" {detections_number} раз(а)"
+
+
+
+Process finished with exit code 0
+
+    
+    
+Вывод:
+При выполнении функции func_5 используется 58.8 MiB оперативной памяти. При помощи команды del удалены ссылки на список 
+array и словарь mydict, после того как они выполнили свою задачу, таким образом удалоось освободить 36.8 MiB памяти.
 """
+
