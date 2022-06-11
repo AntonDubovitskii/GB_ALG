@@ -59,7 +59,7 @@ class BinaryTree:
             tree_obj.right_child = self.right_child
             self.right_child = tree_obj
 
-    def insert_to_tree(self, value):
+    def add_to_tree(self, value):
         try:
             if type(value) != int:
                 raise WrongTreeValueException('Попытка добавить некорректное значение')
@@ -77,7 +77,7 @@ class BinaryTree:
                 raise MissingNodeExeption('Попытка обратиться к несуществующему потомку')
             return self.right_child
         except MissingNodeExeption:
-            return f'Ошибка! У узла со значением {self.get_root_val()} отсутствует правый потомок!'
+            print(f'Ошибка! У узла со значением {self.get_root_val()} отсутствует правый потомок!')
 
     # метод доступа к левому потомку
     def get_left_child(self):
@@ -86,7 +86,7 @@ class BinaryTree:
                 raise MissingNodeExeption('Попытка обратиться к несуществующему потомку')
             return self.left_child
         except MissingNodeExeption:
-            return f'Ошибка! У узла со значением {self.get_root_val()} отсутствует левый потомок!'
+            print(f'Ошибка! У узла со значением {self.get_root_val()} отсутствует левый потомок!')
 
     # метод установки корня
     def set_root_val(self, obj):
@@ -94,22 +94,33 @@ class BinaryTree:
 
     # метод доступа к корню
     def get_root_val(self):
-        return self.root
+        try:
+            return self.root
+        except AttributeError:
+            print('Ошибка доступа к атрибуту класса.')
 
 
-r = BinaryTree(50)
+if __name__ == '__main__':
+    r = BinaryTree(50)
 
-r.insert_to_tree(60)
-r.insert_to_tree(45)
+    print(r.get_left_child())           # Ошибка! У узла со значением 50 отсутствует левый потомок!
 
-print(r.get_left_child())
-print(r.get_left_child().get_root_val())
+    r.add_to_tree(45)
+    r.add_to_tree(60)
 
-print(r.get_right_child())
-print(r.get_right_child().get_root_val())
+    print(r.get_left_child())                  # <__main__.BinaryTree object at 0x000001F907F67E20>
+    print(r.get_left_child().get_root_val())   # 45
+
+    print(r.get_right_child())                 # <__main__.BinaryTree object at 0x000001F907F67DC0>
+    print(r.get_right_child().get_root_val())  # 60
+
+    r.add_to_tree('text')       # Ошибка, введите число!
+
+    r.add_to_tree(10)
+    print(r.get_left_child().get_right_child())    # Ошибка! У узла со значением 10 отсутствует правый потомок!
 
 """
-Добавлен метод insert_to_tree(), автоматически определяющий, в каком положении должен быть потомок с таким значением.
+Добавлен метод add_to_tree(), автоматически определяющий, в каком положении должен быть потомок с данным значением.
 Методы insert_right() и insert_left() сделаны приватными. 
 Добавлена валидация переданных значений и обращений к отсутствующим узлам дерева.
 """
